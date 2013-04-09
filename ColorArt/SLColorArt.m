@@ -46,7 +46,7 @@
 @property(retain,readwrite) NSColor *backgroundColor;
 @property(retain,readwrite) NSColor *primaryColor;
 @property(retain,readwrite) NSColor *secondaryColor;
-@property(retain,readwrite) NSColor *detailColor;
+@property(retain,readwrite) NSColor *detailColor; 
 @end
 
 
