@@ -1,8 +1,7 @@
 //
-//  SLColorArt.h
+//  AppDelegate.m
 //  ColorArt
 //
-//  Created by Aaron Brethorst on 12/11/12.
 //
 // Copyright (C) 2012 Panic Inc. Code by Wade Cosgrove. All rights reserved.
 //
@@ -15,14 +14,40 @@
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL PANIC INC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-#import <Foundation/Foundation.h>
+#import "AppDelegate.h"
+#import "SLColorArt.h"
 
-@interface SLColorArt : NSObject
-@property(retain, readonly) NSColor *backgroundColor;
-@property(retain, readonly) NSColor *primaryColor;
-@property(retain, readonly) NSColor *secondaryColor;
-@property(retain, readonly) NSColor *detailColor;
-@property(nonatomic, copy) NSImage *scaledImage;
+@implementation AppDelegate
 
-- (id)initWithImage:(NSImage*)image scaledSize:(NSSize)size;
+- (IBAction)chooseImage:(id)sender
+{
+	NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+	
+	[openPanel setCanChooseFiles:YES];
+	[openPanel setAllowsMultipleSelection:NO];
+	[openPanel setPrompt:@"Select"];
+	[openPanel setAllowedFileTypes:[NSImage imageTypes]];
+	
+	[openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result)
+	{
+		if ( result == NSFileHandlingPanelOKButton )
+		{
+			NSURL *url = [openPanel URL];
+			
+			NSImage *image = [[NSImage alloc] initByReferencingURL:url];
+			if ( image != nil )
+			{
+                SLColorArt *colorArt = [[SLColorArt alloc] initWithImage:image scaledSize:NSMakeSize(320., 320.)];
+
+                self.imageView.image = colorArt.scaledImage;
+                self.window.backgroundColor = colorArt.backgroundColor;
+                self.primaryField.textColor = colorArt.primaryColor;
+                self.secondaryField.textColor = colorArt.secondaryColor;
+                self.detailField.textColor = colorArt.detailColor;
+			}
+		}
+	}];
+}
+
 @end
+
